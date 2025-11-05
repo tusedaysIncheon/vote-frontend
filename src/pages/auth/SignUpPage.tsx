@@ -1,4 +1,6 @@
-import { SocialLoginSection } from "@/components/layout/SocialLoginSection";
+import logo from "@/assets/logo.png"
+import { SocialLoginSection } from "@/components/form/SocialForm";
+import { PageLayout } from "@/components/layouts/PageLayout";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,23 +19,27 @@ export default function SignUpPage() {
   const { onSubmit, handleBlurUsername } = useRegiForm(form);
 
   return (
-    <section className="flex flex-col items-center justify-start h-screen bg-background text-foreground p-8">
-      {/* 상단 타이틀 */}
-      <h1 className="text-5xl font-bold">Vote</h1>
-      <p className="pt-6 text-muted-foreground">
-        회원가입하고 Vote 서비스를 이용해보세요
+    <PageLayout
+      variant="centered"
+      contentWidth="sm"
+      contentClassName="items-center text-center"
+      className="md:py-16"
+    >
+      <a href="/">
+        <img src={logo} alt="The WDUW Logo" className="h-45 w-auto select-none" />
+      </a>
+      <p className="text-muted-foreground">
+        회원가입하고 WDUW✨를 이용해보세요
       </p>
 
       <SocialLoginSection />
 
-      {/* 회원가입 폼 */}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="grid w-full max-w-sm gap-4"
+          className="grid w-full max-w-sm gap-4 text-left"
           noValidate
         >
-          {/* 아이디 */}
           <FormField
             control={form.control}
             name="username"
@@ -54,7 +60,6 @@ export default function SignUpPage() {
             )}
           />
 
-          {/* 닉네임 */}
           <FormField
             control={form.control}
             name="nickname"
@@ -69,7 +74,6 @@ export default function SignUpPage() {
             )}
           />
 
-          {/* 이메일 */}
           <FormField
             control={form.control}
             name="email"
@@ -84,7 +88,6 @@ export default function SignUpPage() {
             )}
           />
 
-          {/* 비밀번호 */}
           <FormField
             control={form.control}
             name="password"
@@ -103,7 +106,6 @@ export default function SignUpPage() {
             )}
           />
 
-          {/* 비밀번호 확인 */}
           <FormField
             control={form.control}
             name="confirmPassword"
@@ -122,7 +124,6 @@ export default function SignUpPage() {
             )}
           />
 
-          {/* 제출 버튼 */}
           <Button
             type="submit"
             className="w-full mt-2 active:scale-95 active:brightness-90 transition-transform duration-100"
@@ -131,6 +132,6 @@ export default function SignUpPage() {
           </Button>
         </form>
       </Form>
-    </section>
+    </PageLayout>
   );
 }

@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
+import { PageLayout } from "@/components/layouts/PageLayout";
+
 const BACKEND_API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL;
 
 function CookiePage() {
@@ -59,7 +61,19 @@ function CookiePage() {
     fetchCookie2Body();
   }, [navigate]);
 
-  return <div></div>;
+  return (
+    <PageLayout
+      variant="centered"
+      contentWidth="sm"
+      contentClassName="items-center text-center gap-4"
+      className="md:py-16"
+    >
+      <h1 className="text-2xl font-semibold">로그인 처리 중입니다</h1>
+      <p className="text-sm text-muted-foreground">
+        잠시만 기다려 주세요. 자동으로 다음 페이지로 이동합니다.
+      </p>
+    </PageLayout>
+  );
 }
 
 export default CookiePage;

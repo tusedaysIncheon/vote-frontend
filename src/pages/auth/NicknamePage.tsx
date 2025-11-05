@@ -1,3 +1,4 @@
+import { PageLayout } from "@/components/layouts/PageLayout";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -64,23 +65,22 @@ export default function NicknamePage() {
   };
 
   return (
-    <section className="flex flex-col items-center justify-start h-screen bg-background text-foreground p-8">
-      {/* 상단 타이틀 */}
-      <h1 className="text-3xl font-bold pt-40">센스있는 닉네임 짓기😂</h1>
-      <p className="pt-3 text-muted-foreground">
-        처음 로그인하셨군요!
-      </p>
-      <p className="pt-3 text-muted-foreground">
-      사용할 닉네임을 입력해주세요.
-      </p>
+    <PageLayout
+      variant="centered"
+      contentWidth="sm"
+      contentClassName="items-center text-center"
+      className="md:py-16"
+    >
+      <h1 className="text-3xl font-bold">센스있는 닉네임 짓기😂</h1>
+      <p className="text-muted-foreground">처음 로그인하셨군요!</p>
+      <p className="text-muted-foreground">사용할 닉네임을 입력해주세요.</p>
 
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="grid w-full max-w-sm gap-4 mt-8"
+          className="grid w-full max-w-sm gap-4 mt-8 text-left"
           noValidate
         >
-          {/* 닉네임 입력 */}
           <FormField
             control={form.control}
             name="nickname"
@@ -95,7 +95,6 @@ export default function NicknamePage() {
             )}
           />
 
-          {/* 제출 버튼 */}
           <Button
             type="submit"
             className="w-full mt-2 active:scale-95 active:brightness-90 transition-transform duration-100"
@@ -104,6 +103,6 @@ export default function NicknamePage() {
           </Button>
         </form>
       </Form>
-    </section>
+    </PageLayout>
   );
 }
