@@ -6,8 +6,8 @@ import { useAuthStore } from "@/store/useAuthStore"
 function IndexPage() {
   const { user, isAuthenticated, logout } = useAuthStore()
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await logout()
     window.location.href = "/" // ✅ 새로고침하면서 상태 초기화
   }
 

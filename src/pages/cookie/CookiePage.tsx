@@ -3,11 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import { PageLayout } from "@/components/layouts/PageLayout";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const BACKEND_API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL;
 
 function CookiePage() {
   const navigate = useNavigate();
+  const { setToken } = useAuthStore();
+  
 
   useEffect(() => {
     const fetchCookie2Body = async () => {
@@ -26,8 +29,7 @@ function CookiePage() {
         if (!exchangeResponse.ok) throw new Error("쿠키 처리 실패");
 
         const result = await exchangeResponse.json();
-        localStorage.setItem("accessToken", result.accessToken);
-        localStorage.setItem("refreshToken", result.refreshToken);
+        const accessToken = result.accessToken
 
         // 로그인 처리 성공 후 닉네임 관련 유저정보 조회
         const userResponseInfo = await fetch(
@@ -36,7 +38,7 @@ function CookiePage() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${result.accessToken}`,
+              Authorization: `Bearer ${accessToken}`,
             },
           }
         );
@@ -45,6 +47,8 @@ function CookiePage() {
 
         const userInfo = await userResponseInfo.json();
         console.log("🔥 유저 응답:", userInfo);
+
+        setToken(accessToken, userInfo)
 
         if (userInfo.needsNickname) {
           navigate("/nickname");

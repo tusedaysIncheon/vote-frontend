@@ -1,9 +1,11 @@
 import { existUserApi, signUpApi } from "@/lib/api/UserApi";
 import type { UserRequestDTO } from "@/types/user";
 import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export function useRegiForm(form: any) {
+  const navigate = useNavigate();
   const onSubmit = useCallback(
     async (data: UserRequestDTO) => {
       try {
@@ -12,6 +14,7 @@ export function useRegiForm(form: any) {
           description: "이제 로그인하고 투표하러 갈까요? 🗳️",
         });
         form.reset();
+        navigate("/");
       } catch (error) {
         toast.error("회원가입 실패 😢", {
           description: "입력 정보를 다시 확인해주세요.",
