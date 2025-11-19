@@ -1,15 +1,16 @@
-import { PageLayout } from "@/components/layouts/PageLayout"
-import { Button } from "@/components/ui/button"
-import { Link } from "react-router-dom"
-import { useAuthStore } from "@/store/useAuthStore"
+import { PageLayout } from "@/components/layouts/PageLayout";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { useAuthStore } from "@/store/useAuthStore";
+import { axiosInstance } from "@/lib/api/axiosInstance";
 
 function IndexPage() {
-  const { user, isAuthenticated, logout } = useAuthStore()
+  const { user, isAuthenticated, logout } = useAuthStore();
 
   const handleLogout = async () => {
-    await logout()
-    window.location.href = "/" // ✅ 새로고침하면서 상태 초기화
-  }
+    await logout();
+    window.location.href = "/"; // ✅ 새로고침하면서 상태 초기화
+  };
 
   return (
     <PageLayout
@@ -22,7 +23,9 @@ function IndexPage() {
           <h1 className="text-3xl font-bold">
             {user?.nickname ?? user?.username}님, 환영합니다 🎉
           </h1>
-          <p className="text-muted-foreground">오늘도 멋진 선택을 해보세요 👇</p>
+          <p className="text-muted-foreground">
+            오늘도 멋진 선택을 해보세요 👇
+          </p>
 
           <Button
             onClick={handleLogout}
@@ -31,6 +34,20 @@ function IndexPage() {
           >
             로그아웃
           </Button>
+
+          <button
+            onClick={async () => {
+              try {
+                const res = await axiosInstance.get("/v1/user");
+                console.log("API 호출 성공:", res.data);
+              } catch (error) {
+                console.error("API 호출 실패:", error);
+              }
+            }}
+            className="p-3 bg-blue-500 text-white rounded-lg"
+          >
+            🔥 API 테스트 (GET /v1/user)
+          </button>
         </>
       ) : (
         <>
@@ -43,7 +60,7 @@ function IndexPage() {
         </>
       )}
     </PageLayout>
-  )
+  );
 }
 
-export default IndexPage
+export default IndexPage;
