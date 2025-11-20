@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { AxiosRequestConfig } from "axios";
+import type { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 import { useAuthStore } from "@/store/useAuthStore";
 
 const API = import.meta.env.VITE_BACKEND_API_BASE_URL;
@@ -9,22 +9,28 @@ export const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-axiosInstance.interceptors.request.use((config) => {
+interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig{
+  skipAuth?: boolean;
+  _retry?: boolean;
+}
+
+axiosInstance.interceptors.request.use(
+  (config: ExtendedAxiosRequestConfig) => {
   const token = useAuthStore.getState().accessToken;
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  if (token && !config.skipAuth) {
+    config.headers["Authorization"] = `Bearer ${token}`;
   }
 
   return config;
-});
+},
+(error) => Promise.reject(error)
+);
 
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config as (AxiosRequestConfig & {
-      _retry?: boolean;
-    });
+    const originalRequest = error.config as ExtendedAxiosRequestConfig;
 
     if (!originalRequest) return Promise.reject(error);
 
@@ -50,12 +56,11 @@ axiosInstance.interceptors.response.use(
 
       const newAccessToken = refreshResponse.data.accessToken;
       const currentUser = useAuthStore.getState().user;
+
       useAuthStore.getState().setToken(newAccessToken, currentUser);
 
-      if (!originalRequest.headers) {
-        originalRequest.headers = {};
-      }
       originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+
       return axiosInstance(originalRequest);
 
     } catch (refreshError) {

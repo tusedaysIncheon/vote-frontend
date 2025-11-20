@@ -1,48 +1,40 @@
 import type { UserRequestDTO, UserResponseDTO } from "@/types/user";
-
-const API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL;
+import { axiosInstance } from "./axiosInstance";
 
 // 회원 가입 API 호출
-export async function signUpApi(userData: UserRequestDTO): Promise<UserResponseDTO> {
-  
-    try {
-        const response = await fetch(`${API_BASE_URL}/v1/user`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(userData),
-        });
-    
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`회원가입 실패 : ${errorText}`);
-        }
+export async function signUpApi(
+  userData: UserRequestDTO
+): Promise<UserResponseDTO> {
+  try {
+    const response = await axiosInstance.post<UserResponseDTO>(
+      "/v1/user",
+      userData,
+      { skipAuth: true }
+    );
 
-        // 응답 데이터를 JSON 형태로 파싱
-        const result: UserResponseDTO = await response.json();
-        return result;
-    }
-    catch (error) {
-        console.error("회원가입 중 오류 발생:", error);
-        throw error;
-    }
-    
+    return response.data;
+  } catch (error: any) {
+    console.error("회원가입 실패:", error);
+    const message =
+      error?.response?.data?.message ||
+      error?.message ||
+      "회원가입 중 오류가 발생했습니다.";
+
+    throw new Error(message);
+  }
 }
 // 중복 검사 API 호출
-export async function existUserApi(username: string): Promise<boolean> {
+export async function existUserApi(
+  username: string
+): Promise<boolean> {
   try {
-    const response = await fetch(`${API_BASE_URL}/v1/user/exist`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username }),
-    });
+    const response = await axiosInstance.post(
+      "/v1/user/exist",
+      { username },
+      { skipAuth: true}
+    );
 
-    if (!response.ok) throw new Error("아이디 중복 검사 실패");
-
-    const result = await response.json();
+    const result = response.data;
 
     if (typeof result === "boolean") {
       return result;
@@ -53,8 +45,70 @@ export async function existUserApi(username: string): Promise<boolean> {
     }
 
     throw new Error("아이디 중복 검사 응답 형식을 확인해주세요.");
-  } catch (error) {
-    console.error("아이디 중복 검사 중 오류 발생:", error);
-    throw error;
+  } catch (error: any) {
+    console.error("❌ 아이디 중복 검사 오류:", error);
+
+    const message =
+      error?.response?.data?.message ||
+      error?.message ||
+      "아이디 중복 검사 중 오류가 발생했습니다.";
+
+    throw new Error(message);
   }
 }
+
+export async function getMyInfoAPI(): Promise<UserResponseDTO>{
+
+  try {
+    const response = await axiosInstance.get<UserResponseDTO>("/v1/user");
+    return response.data;
+  }catch(error:any){
+    console.error("내정보조회 실패:", error);
+    throw new Error("사용자 정보를 불러오지 못했습니다.");
+  }
+}
+
+export async function updateNicknameAPI(nickname: string) {
+
+  try {
+    const response = await axiosInstance.patch(
+      "/v1/user/nickname",
+      { nickname }
+    );
+    return response.data;
+  }catch (error: any) {
+    console.error("❌ 닉네임 변경 실패:", error);
+    throw new Error(
+      error?.response?.data?.message ||
+        "닉네임 변경 중 오류가 발생했습니다."
+    );
+  }
+}
+
+export async function udateMyInfoAPI(data: Partial<UserRequestDTO>) {
+  try{
+  const response = await axiosInstance.put("/v1/user", data);
+  return response.data;
+  }catch (error: any) {
+    console.error("❌ 내 정보 수정 실패:", error);
+    throw new Error(
+      error?.response?.data?.message ||
+        "내 정보 수정 중 오류가 발생했습니다."
+    );
+  }
+}
+
+export async function deleteUserApi() {
+  try {
+    const response = await axiosInstance.delete("/v1/user");
+    return response.data;
+  } catch (error: any) {
+    console.error("❌ 회원 탈퇴 실패:", error);
+    throw new Error(
+      error?.response?.data?.message ||
+        "회원 탈퇴 중 문제가 발생했습니다."
+    );
+  }
+}
+
+  

@@ -1,10 +1,9 @@
+import { axiosInstance } from "@/lib/api/axiosInstance";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import axios from "axios";
-import { axiosInstance } from "@/lib/api/axiosInstance";
 const API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL;
 
-// ✅ 유저 정보 타입 (백엔드의 UserResponseDTO와 동일)
+//유저 정보 타입 (백엔드의 UserResponseDTO와 동일)
 interface User {
   username: string;
   email: string;
@@ -13,7 +12,7 @@ interface User {
   needsNickname: boolean;
 }
 
-// ✅ Zustand 스토어 타입 정의
+//Zustand 스토어 타입 정의
 interface AuthState {
   user: User | null;
   accessToken: string | null;
@@ -24,7 +23,7 @@ interface AuthState {
   setToken: (accessToken: string, user: User | null) => void;
 }
 
-// ✅ Zustand 스토어 생성 (persist로 로컬스토리지 자동저장)
+//Zustand 스토어 생성 (persist로 로컬스토리지 자동저장)
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -34,9 +33,6 @@ export const useAuthStore = create<AuthState>()(
 
       /**
        * 🟢 로그인 함수
-       * 1️⃣ 백엔드 /vote/v1/auth/login 호출
-       * 2️⃣ 토큰 + 유저정보를 Zustand에 저장
-       * 3️⃣ axios 기본 헤더에 Authorization 추가
        */
       login: async (username, password) => {
 
@@ -47,25 +43,16 @@ export const useAuthStore = create<AuthState>()(
         }
 
         try {
-          // 1️⃣ 로그인 요청 (POST)
-          const res = await axios.post(
-            `${API_BASE_URL}/v1/user/login`,
-            {
-              username,
-              password,
-              deviceId,
-            },
-            { withCredentials: true }
+          //로그인 요청 (POST)
+          const res = await axiosInstance.post(
+            "/v1/user/login",
+            {username, password, deviceId},
+            { skipAuth: true}
           );
 
-          // 2️⃣ 응답 데이터 구조
+          //응답 데이터 구조
           // res.data = { accessToken, user: {...} }
           const { accessToken, user } = res.data;
-
-          // 3️⃣ axios에 Authorization 헤더 기본 세팅 (자동 로그인 유지)
-          axiosInstance.defaults.headers.common[
-            "Authorization"
-          ] = `Bearer ${accessToken}`;
 
           // 4️⃣ Zustand 상태 업데이트
           set({
@@ -81,9 +68,6 @@ export const useAuthStore = create<AuthState>()(
       },
 
       setToken: (accessToken, user) => {
-        axiosInstance.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${accessToken}`;
         set({
           accessToken,
           user,
@@ -92,32 +76,24 @@ export const useAuthStore = create<AuthState>()(
       },
 
       /**
-       * 🔴 로그아웃 함수
-       * 1️⃣ 상태 초기화
-       * 2️⃣ axios Authorization 헤더 제거
+       * 로그아웃 함수
        */
       logout: async (options) => {
+        const token = get().accessToken;
+
         try {
-          if (!options?.skipServer) {
-            const token = get().accessToken;
-            await axios.post(
-              `${API_BASE_URL}/logout`,
+          if (!options?.skipServer && token) {
+            await axiosInstance.post(
+              "/logout",
               {},
-              {
-                withCredentials: true,
-                headers: token
-                  ? {
-                      Authorization: `Bearer ${token}`,
-                    }
-                  : undefined,
-              }
-            );
+              { headers: { Authorization: `Bearer ${token}`}}
+            )
           }
         } catch (error) {
           console.warn("로그아웃 중 오류 발생", error);
         } finally {
           set({ user: null, accessToken: null, isAuthenticated: false });
-          delete axios.defaults.headers.common["Authorization"];
+
           delete axiosInstance.defaults.headers.common["Authorization"];
         }
       },

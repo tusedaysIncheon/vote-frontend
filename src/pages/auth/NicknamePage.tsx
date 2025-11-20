@@ -14,8 +14,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import { updateNicknameAPI } from "@/lib/api/UserApi";
 
-const BACKEND_API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL;
 
 // ✅ 닉네임 유효성 검증
 const nicknameSchema = z.object({
@@ -39,26 +39,11 @@ export default function NicknamePage() {
 
   const onSubmit = async (data: NicknameForm) => {
     try {
-      const token = localStorage.getItem("accessToken");
-      if (!token) throw new Error("로그인 정보가 없습니다.");
 
-      const response = await fetch(`${BACKEND_API_BASE_URL}/v1/user/nickname`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(errText || "닉네임 등록 실패");
-      }
-
-      toast.success("닉네임이 등록되었습니다 🎉");
+      await updateNicknameAPI(data.nickname);
+      toast.success("닉네임이 등록되었습니다!");
       navigate("/");
-    } catch (error: any) {
+    }catch (error: any) {
       console.error(error);
       toast.error(error.message || "닉네임 등록 중 오류가 발생했습니다.");
     }

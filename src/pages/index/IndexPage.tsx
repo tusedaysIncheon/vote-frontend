@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
 import { axiosInstance } from "@/lib/api/axiosInstance";
+import { getMyInfoAPI } from "@/lib/api/UserApi";
 
 function IndexPage() {
   const { user, isAuthenticated, logout } = useAuthStore();
@@ -38,8 +39,8 @@ function IndexPage() {
           <button
             onClick={async () => {
               try {
-                const res = await axiosInstance.get("/v1/user");
-                console.log("API 호출 성공:", res.data);
+                const res = await getMyInfoAPI();
+                console.log("API 호출 성공:", res);
               } catch (error) {
                 console.error("API 호출 실패:", error);
               }
