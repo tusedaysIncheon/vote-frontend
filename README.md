@@ -8,10 +8,12 @@
 | --- | --- | --- |
 | **Core** | React, Vite, TypeScript | UI 구축, 빌드 시스템 및 타입 안정성 확보 |
 | **Styling** | Tailwind CSS, shadcn/ui | 빠른 UI 개발 및 일관된 디자인 시스템 |
+| **UI & Icons** | lucide-react, react-icons | 아이콘 라이브러리 |
 | **State Management** | Zustand, React Query | 전역 상태 및 서버 상태 관리 |
 | **Routing** | React Router DOM | SPA(단일 페이지 애플리케이션) 라우팅 처리 |
 | **Form Handling** | React Hook Form, Zod | 폼 상태 관리 및 스키마 기반 유효성 검사 |
 | **API Client** | Axios | HTTP 요청 및 응답 처리, 인터셉터를 통한 토큰 관리 |
+| **UX/DX** | sonner, next-themes, @tanstack/react-query-devtools | 사용자 피드백, 테마 관리, 개발 도구 |
 | **Linting** | ESLint, TypeScript ESLint | 코드 품질 및 일관성 유지 |
 
 ## ✨ 주요 기능
@@ -19,8 +21,17 @@
 ### 1. 사용자 인증
 - **이메일/비밀번호 가입 및 로그인**: 기본적인 사용자 인증 시스템을 제공합니다.
 - **소셜 로그인**: Google, Naver, Kakao 계정을 이용한 간편 로그인을 지원합니다.
+- **최초 소셜 로그인 시 닉네임 등록**: 소셜 로그인 사용자가 처음 방문할 경우, 닉네임 설정 페이지로 이동하여 추가 정보를 입력받습니다.
 - **JWT 기반 세션 관리**: Access Token과 Refresh Token을 사용하여 안전하고 지속적인 사용자 세션을 관리하며, 자동으로 토큰을 갱신합니다.
 - **인증 상태에 따른 UI/UX**: 로그인 여부에 따라 헤더, 네비게이션 바 등 UI가 동적으로 변경됩니다.
+
+#### 소셜 로그인 처리 흐름
+1.  사용자가 소셜 로그인 버튼(Google, Naver, Kakao)을 클릭하면 백엔드 로그인 페이지로 리디렉션됩니다.
+2.  로그인 성공 시, 백엔드는 클라이언트의 `/cookie` 경로로 리디렉션하며, 응답 헤더에 `httpOnly` 쿠키를 설정합니다.
+3.  `CookiePage` 컴포넌트는 마운트 시 `/jwt/exchange` 엔드포인트로 요청을 보내 백엔드로부터 JWT Access Token을 발급받습니다.
+4.  발급받은 토큰으로 사용자 정보를 조회하고, 전역 상태(Zustand)에 저장합니다.
+5.  만약 사용자 정보에 `needsNickname: true` 필드가 포함되어 있다면, `/nickname` 페이지로 이동하여 사용자에게 닉네임 등록을 유도합니다.
+6.  닉네임 등록이 필요 없거나 완료된 경우, 메인 페이지(`/`)로 이동하며 환영 메시지를 표시합니다.
 
 ### 2. 사용자 경험
 - **반응형 디자인**: 데스크톱과 모바일 환경에 최적화된 UI를 제공합니다.
@@ -80,6 +91,10 @@ npm run dev
 - **`pages`**: `React Router`에 의해 렌더링되는 페이지 단위의 컴포넌트들을 관리합니다.
 - **`store`**: `Zustand`를 사용하여 사용자 인증 정보와 같은 전역 상태를 관리합니다.
 - **`types`**: 프로젝트 전반에서 사용되는 TypeScript 타입 정의를 관리합니다.
+
+## 📝 문서
+- `docs/react-query-guide.md`: React Query 사용법에 대한 가이드입니다.
+- `docs/token-rotation-cleanup.md`: 토큰 순환 및 정리에 대한 문서입니다.
 
 ## 🧩 코드 특징 및 개선 제안
 
