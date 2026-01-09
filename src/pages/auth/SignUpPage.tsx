@@ -62,20 +62,6 @@ export default function SignUpPage() {
 
           <FormField
             control={form.control}
-            name="nickname"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>닉네임</FormLabel>
-                <FormControl>
-                  <Input placeholder="닉네임을 입력하세요" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>

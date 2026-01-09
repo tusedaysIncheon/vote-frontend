@@ -1,5 +1,5 @@
 import { existUserApi, signUpApi } from "@/lib/api/UserApi";
-import type { UserRequestDTO } from "@/types/user";
+import type { UserRequestDTO } from "@/types/auth";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -10,18 +10,19 @@ export function useRegiForm(form: any) {
     async (data: UserRequestDTO) => {
       try {
         const result = await signUpApi(data);
-        toast.success(`${result.nickname}님 회원가입을 축하드립니다! 🎉`, {
+        toast.success(`${result.username}님 회원가입을 축하드립니다! 🎉`, {
           description: "이제 로그인하고 투표하러 갈까요? 🗳️",
         });
         form.reset();
-        navigate("/");
+        navigate("/profile-setup");
       } catch (error) {
+        console.log("회원가입에러", error)
         toast.error("회원가입 실패 😢", {
           description: "입력 정보를 다시 확인해주세요.",
         });
       }
     },
-    [form]
+    [form, navigate]
   );
 
   const checkUsernameExists = useCallback(async (username: string) => {

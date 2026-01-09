@@ -6,7 +6,7 @@ import IndexPage from "@/pages/index/IndexPage"
 import LoginPage from "@/pages/auth/LoginPage"
 import SignUpPage from "@/pages/auth/SignUpPage"
 import CookiePage from "@/pages/cookie/CookiePage"
-import NicknamePage from "@/pages/auth/NicknamePage"
+import ProfileSetupPage from "@/pages/auth/ProfileSetupPage"
 import LayoutGuidePage from "@/pages/examples/LayoutGuidePage"
 import { UserHeader } from "@/components/layouts/headers/UserHeader"
 import { GuestHeader } from "@/components/layouts/headers/GuestHeader"
@@ -54,7 +54,7 @@ export default function AppLayout() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/cookie" element={<CookiePage />} />
-            <Route path="/nickname" element={<NicknamePage />} />
+            <Route path="/profile-setup" element={< ProfileSetupPage />} />
             <Route path="/dev/layout-guide" element={<LayoutGuidePage />} />
           </Routes>
         </div>

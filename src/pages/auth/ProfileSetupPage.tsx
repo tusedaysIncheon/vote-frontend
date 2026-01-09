@@ -1,0 +1,405 @@
+import { PageLayout } from "@/components/layouts/PageLayout";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // 👈 추가됨
+import { CalendarIcon, UserRound, Sparkles, Camera } from "lucide-react"; // 👈 Camera 추가됨
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
+import { cn } from "@/lib/utils";
+
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
+import { useState, useRef } from "react"; // 👈 Hook 추가됨
+import type { ChangeEvent } from "react";
+import { 
+  GENDER_LIST, 
+  REGION_LIST, 
+  RELATIONSHIP_LIST, 
+  MBTI_LIST 
+} from "@/types/profile";
+//import { saveUserDetailAPI } from "@/lib/api/UserApi";
+
+// --- Zod 스키마 ---
+const profileSchema = z.object({
+  nickname: z
+    .string()
+    .min(2, "닉네임은 2자 이상이어야 합니다.")
+    .max(20, "닉네임은 20자 이하로 입력해주세요.")
+    .regex(/^[가-힣a-zA-Z0-9._-]+$/, "특수문자는 ._- 만 가능합니다"),
+
+  birthDate: z.date().refine((date) => date !== undefined, {
+    message: "생년월일을 선택해주세요.",
+  }),
+
+  gender: z.string().min(1, "성별을 선택해주세요"),
+  region: z.string().min(1, "거주 지역을 선택해주세요"),
+  relationshipStatus: z.string().min(1, "연애 상태를 선택해주세요"),
+  mbti: z.string().optional(),
+  introduce: z.string().max(100, "100자 이내로 작성해주세요").optional(),
+});
+
+type ProfileForm = z.infer<typeof profileSchema>;
+
+export default function ProfileSetupPage() {
+  const navigate = useNavigate();
+  
+  // ✅ 이미지 업로드용 Hook (컴포넌트 안쪽에 위치해야 함!)
+  const [preview, setPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Form 설정
+  const form = useForm<ProfileForm>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      nickname: "",
+      // @ts-ignore
+      birthDate: undefined,
+      gender: "",
+      region: "",
+      relationshipStatus: "",
+      mbti: "",
+      introduce: "",
+    },
+    mode: "onChange",
+  });
+
+  // ✅ 이미지 변경 핸들러
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // 1. 미리보기 URL 생성
+      const objectUrl = URL.createObjectURL(file);
+      setPreview(objectUrl);
+      
+      // TODO: 나중에 여기서 S3 업로드 로직 추가
+      // uploadToS3(file).then(url => form.setValue('imageUrl', url));
+    }
+  };
+
+  const onSubmit = async (data: ProfileForm) => {
+    try {
+      const submitData = {
+        nickname: data.nickname,
+        birthYear: data.birthDate.getFullYear(),
+        gender: data.gender,
+        region: data.region,
+        relationshipStatus: data.relationshipStatus,
+        mbti: data.mbti || undefined,
+        introduce: data.introduce || undefined,
+        // imageUrl: "S3_URL_HERE", // 나중에 추가
+      };
+      
+      console.log("🚀 전송 데이터:", submitData);
+      
+      // await saveUserDetailAPI(submitData);
+      
+      toast.success("프로필 설정 완료! 🎉");
+      navigate("/");
+    } catch (error: any) {
+      console.error(error);
+      toast.error("저장 실패 😢");
+    }
+  };
+
+  return (
+    <PageLayout
+      variant="centered"
+      contentWidth="md"
+      className="py-10 animate-in fade-in slide-in-from-bottom-4 duration-500"
+    >
+      <Card className="w-full max-w-lg mx-auto shadow-xl border-t-4 border-t-primary">
+        <CardHeader className="text-center space-y-2 pb-8">
+          {/* 상단 아이콘 삭제하고 바로 타이틀로 */}
+          <CardTitle className="text-2xl font-bold">내 프로필 완성하기</CardTitle>
+          <CardDescription className="text-base">
+            투표 통계를 위해 <b>딱 30초</b>만 투자해주세요.<br/>
+            솔직하게 적어야 결정 장애 해결에 도움이 됩니다!
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              
+              {/* 📸 프로필 이미지 업로더 (여기에 추가됨) */}
+              <div className="flex flex-col items-center justify-center mb-2">
+                <div 
+                  className="relative group cursor-pointer" 
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Avatar className="w-28 h-28 border-4 border-muted shadow-sm group-hover:border-primary transition-all">
+                    <AvatarImage src={preview || ""} className="object-cover" />
+                    <AvatarFallback className="bg-muted">
+                      <UserRound className="w-12 h-12 text-muted-foreground/50" />
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  {/* 카메라 아이콘 배지 */}
+                  <div className="absolute bottom-1 right-1 bg-primary text-white p-2 rounded-full shadow-md group-hover:scale-110 transition-transform">
+                    <Camera className="w-4 h-4" />
+                  </div>
+                </div>
+                
+                {/* 숨겨진 파일 입력창 */}
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  className="hidden" 
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+                <p className="text-xs text-muted-foreground mt-3">프로필 사진을 눌러 변경하세요</p>
+              </div>
+
+
+              {/* 1. 닉네임 */}
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="nickname"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-semibold">닉네임</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="센스있는 닉네임 (2~20자)" 
+                          className="h-11 text-md bg-muted/30 focus:bg-background transition-colors"
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* 2. 인적사항 */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {/* 생년월일 */}
+                <FormField
+                  control={form.control}
+                  name="birthDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>생년월일 <span className="text-destructive">*</span></FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "w-full pl-3 text-left font-normal h-10 hover:bg-muted/50",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "yyyy년 MM월 dd일", { locale: ko })
+                              ) : (
+                                <span>날짜 선택</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            initialFocus
+                            captionLayout="dropdown"
+                            fromYear={1950}
+                            toYear={new Date().getFullYear()}
+                            locale={ko}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* 성별 */}
+                <FormField
+                  control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>성별 <span className="text-destructive">*</span></FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="h-10 hover:bg-muted/50">
+                            <SelectValue placeholder="선택" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {GENDER_LIST.map((g) => (
+                             <SelectItem key={g} value={g}>
+                               {g === "MALE" ? "남성 🙋‍♂️" : "여성 🙋‍♀️"}
+                             </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* 3. 추가 정보 */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {/* 거주지 */}
+                <FormField
+                  control={form.control}
+                  name="region"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-1">
+                        거주지 <span className="text-destructive">*</span>
+                      </FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="h-10 hover:bg-muted/50">
+                            <SelectValue placeholder="선택" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {REGION_LIST.map((r) => (
+                            <SelectItem key={r} value={r}>{r}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* 연애 상태 */}
+                <FormField
+                  control={form.control}
+                  name="relationshipStatus"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-1">
+                        연애 상태 <span className="text-destructive">*</span>
+                      </FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="h-10 hover:bg-muted/50">
+                            <SelectValue placeholder="선택" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {RELATIONSHIP_LIST.map((rs) => (
+                            <SelectItem key={rs} value={rs}>
+                              {rs === "SINGLE" ? "솔로 🥲" : rs === "IN_RELATIONSHIP" ? "연애중 🥰" : "결혼함 💍"}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* MBTI */}
+              <FormField
+                control={form.control}
+                name="mbti"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-1">
+                      MBTI <span className="text-xs text-muted-foreground font-normal">(선택)</span>
+                    </FormLabel>
+                    <Select 
+                      onValueChange={(val) => field.onChange(val === "NONE" ? "" : val)} 
+                      value={field.value || "NONE"}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="h-10 hover:bg-muted/50">
+                          <SelectValue placeholder="당신의 MBTI는?" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="NONE" className="text-muted-foreground">선택 안 함</SelectItem>
+                        {MBTI_LIST.filter(m => m !== "").map((m) => (
+                          <SelectItem key={m} value={m}>{m}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              {/* 한줄 소개 */}
+              <FormField
+                control={form.control}
+                name="introduce"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>한줄 소개 <span className="text-xs text-muted-foreground font-normal">(선택)</span></FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="나를 표현하는 한 마디 (최대 100자)" 
+                        className="bg-muted/30 focus:bg-background"
+                        {...field} 
+                        value={field.value || ""} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="pt-4">
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 text-lg font-bold shadow-lg bg-gradient-to-r from-primary to-primary/80 hover:scale-[1.01] transition-all duration-200"
+                >
+                  <Sparkles className="w-5 h-5 mr-2 fill-white" />
+                  WDUW 시작하기 🚀
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </PageLayout>
+  );
+}

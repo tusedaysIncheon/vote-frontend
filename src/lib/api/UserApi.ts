@@ -1,4 +1,4 @@
-import type { UserRequestDTO, UserResponseDTO } from "@/types/user";
+import type { UserRequestDTO, UserResponseDTO } from "@/types/auth";
 import { axiosInstance } from "./axiosInstance";
 
 // 회원 가입 API 호출
