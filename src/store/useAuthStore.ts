@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { UserResponseDTO } from "@/types/user";
+import type { UserResponseDTO } from "@/types/auth";
 import { axiosInstance } from "@/lib/api/axiosInstance";
 
 interface AuthState {

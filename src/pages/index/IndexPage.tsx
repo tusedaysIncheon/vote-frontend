@@ -1,14 +1,17 @@
 import { PageLayout } from "@/components/layouts/PageLayout";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
 
-import { getMyInfoAPI, logoutAPI } from "@/lib/api/UserApi";
+import { logoutAPI } from "@/lib/api/UserApi";
 import { toast } from "sonner";
+
 
 function IndexPage() {
   const { user, isAuthenticated } = useAuthStore();
   const clearAuthState = useAuthStore((state) => state.logout);
+  const navigate = useNavigate();
+
 
   const handleLogout = async () => {
     try{
@@ -32,7 +35,7 @@ function IndexPage() {
       {isAuthenticated ? (
         <>
           <h1 className="text-3xl font-bold">
-            {user?.nickname ?? user?.username}님, 환영합니다 🎉
+            {user?.username}님, 환영합니다 🎉
           </h1>
           <p className="text-muted-foreground">
             오늘도 멋진 선택을 해보세요 👇
@@ -48,16 +51,11 @@ function IndexPage() {
 
           <button
             onClick={async () => {
-              try {
-                const res = await getMyInfoAPI();
-                console.log("API 호출 성공:", res);
-              } catch (error) {
-                console.error("API 호출 실패:", error);
-              }
+              navigate("/profile-setup");
             }}
             className="p-3 bg-blue-500 text-white rounded-lg"
           >
-            🔥 API 테스트 (GET /v1/user)
+            🔥프로필 마저 입력하기
           </button>
         </>
       ) : (

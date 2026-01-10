@@ -6,7 +6,7 @@
 
 | 구분 | 기술 | 설명 |
 | --- | --- | --- |
-| **Core** | React, Vite, TypeScript | UI 구축, 빌드 시스템 및 타입 안정성 확보 |
+| **Core** | React 19, Vite, TypeScript | React 19의 Compiler를 활용한 UI 구축, 빌드 시스템 및 타입 안정성 확보 |
 | **Styling** | Tailwind CSS, shadcn/ui | 빠른 UI 개발 및 일관된 디자인 시스템 |
 | **UI & Icons** | lucide-react, react-icons | 아이콘 라이브러리 |
 | **State Management** | Zustand, React Query | 전역 상태 및 서버 상태 관리 |
@@ -14,7 +14,7 @@
 | **Form Handling** | React Hook Form, Zod | 폼 상태 관리 및 스키마 기반 유효성 검사 |
 | **API Client** | Axios | HTTP 요청 및 응답 처리, 인터셉터를 통한 토큰 관리 |
 | **UX/DX** | sonner, next-themes, @tanstack/react-query-devtools | 사용자 피드백, 테마 관리, 개발 도구 |
-| **Linting** | ESLint, TypeScript ESLint | 코드 품질 및 일관성 유지 |
+| **Linting** | ESLint, TypeScript ESLint | `eslint.config.js`를 사용한 최신 플랫 설정 기반의 코드 품질 및 일관성 유지 |
 
 ## ✨ 주요 기능
 
@@ -63,6 +63,8 @@ npm run dev
 ```
 이제 http://localhost:5173 에서 애플리케이션을 확인할 수 있습니다.
 
+> **Note:** `dev` 스크립트는 `--host` 플래그를 사용하여 실행되므로, 동일한 네트워크에 연결된 다른 기기(예: 스마트폰)에서 `http://<YOUR_LOCAL_IP>:5173` 주소로 접속하여 테스트할 수 있습니다.
+
 ## 🛠️ 사용 가능한 스크립트
 
 - **`npm run dev`**: 개발 모드로 Vite 서버를 실행합니다. Hot-reloading을 지원합니다.
@@ -99,6 +101,7 @@ npm run dev
 ## 🧩 코드 특징 및 개선 제안
 
 ### 코드 특징
+- **최신 React 기반의 성능 최적화**: React 19과 내장 컴파일러(`react-compiler`)를 사용하여 불필요한 리렌더링을 자동으로 최적화하고, 코드 가독성을 해치지 않으면서 높은 성능을 유지합니다.
 - **관심사 분리 (SoC)**: UI(components), 비즈니스 로직(hooks), API 통신(lib/api), 상태(store)가 명확하게 분리되어 유지보수성이 높습니다.
 - **선언적 서버 상태 관리**: `React Query`를 통해 서버 데이터의 `fetching`, `caching`, `synchronizing` 로직을 선언적으로 관리하여 복잡성을 줄입니다.
 - **타입 안정성**: `TypeScript`와 `Zod`를 적극적으로 활용하여 컴파일 타임과 런타임 모두에서 데이터의 안정성을 확보합니다.

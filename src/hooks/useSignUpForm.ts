@@ -13,7 +13,6 @@ export function useSignUpForm() {
       username: "",
       password: "",
       email: "",
-      nickname: "",
       confirmPassword: "",
     },
   })
