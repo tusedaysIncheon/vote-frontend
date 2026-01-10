@@ -54,14 +54,14 @@ function CookiePage() {
        setUser(userInfo);
 
         if (userInfo.needsNickname) {
-          navigate("/nickname");
+          navigate("/profile-setup", { replace: true });
         } else {
           toast.success(`${userInfo.nickname ?? "회원"}님 환영합니다!`);
-          navigate("/");
+          navigate("/profile-setup", { replace: true });
         }
       } catch (error) {
         toast.error("로그인 처리에 실패했습니다. 다시 시도해주세요.");
-        navigate("/login");
+        navigate("/login", { replace: true });
       }
     };
 

@@ -1,5 +1,7 @@
 import type { UserRequestDTO, UserResponseDTO } from "@/types/auth";
 import { axiosInstance } from "./axiosInstance";
+import axios from "axios";
+import type { UserDetailRequestDTO } from "@/types/profile";
 
 // 회원 가입 API 호출
 export async function signUpApi(
@@ -55,6 +57,7 @@ export async function existUserApi(username: string): Promise<boolean> {
   }
 }
 
+//내정보조회 API
 export async function getMyInfoAPI(): Promise<UserResponseDTO> {
   try {
     const response = await axiosInstance.get<UserResponseDTO>("/v1/user");
@@ -65,20 +68,7 @@ export async function getMyInfoAPI(): Promise<UserResponseDTO> {
   }
 }
 
-export async function updateNicknameAPI(nickname: string) {
-  try {
-    const response = await axiosInstance.patch("/v1/user/nickname", {
-      nickname,
-    });
-    return response.data;
-  } catch (error: any) {
-    console.error("❌ 닉네임 변경 실패:", error);
-    throw new Error(
-      error?.response?.data?.message || "닉네임 변경 중 오류가 발생했습니다."
-    );
-  }
-}
-
+//내정보수정 API
 export async function updateMyInfoAPI(data: Partial<UserRequestDTO>) {
   try {
     const response = await axiosInstance.put("/v1/user", data);
@@ -91,6 +81,7 @@ export async function updateMyInfoAPI(data: Partial<UserRequestDTO>) {
   }
 }
 
+//회원탈퇴API
 export async function deleteUserApi() {
   try {
     const response = await axiosInstance.delete("/v1/user");
@@ -103,6 +94,7 @@ export async function deleteUserApi() {
   }
 }
 
+//로그인API
 export async function loginAPI(username: string, password: string) {
   let deviceId = localStorage.getItem("deviceId");
   if (!deviceId) {
@@ -122,6 +114,7 @@ export async function loginAPI(username: string, password: string) {
     return response.data;
 }
 
+//로그아웃 API
 export async function logoutAPI() {
   try {
     const deviceId = localStorage.getItem("deviceId") || "unknown-device";
@@ -131,4 +124,44 @@ export async function logoutAPI() {
   } catch (err) {
     console.warn("로그아웃 요청 중 오류 발생 (무시하고 진행):", err);
   }
+}
+
+//이미지 업로드용 S3 presignedUrl 요청 API
+export async function getPresignedUrlAPI(
+  filename: string, folder: "profileImage" | "contentImage"
+) 
+{
+  try{
+    const response = await axiosInstance.post("/v1/s3/presigned-url",{
+      filename,
+      folder,
+    });
+
+    return response.data;
+  } catch(error) {
+    console.warn("이미지 업로드 실패:", error);
+  }
+}
+
+//요청 presignedUrl 로 파일 업로드 요청 API
+export async function uploadToS3( presignedUrl: string, file: File) {
+
+  await axios.put(presignedUrl, file, {
+    headers: {
+      "Content-Type" : file.type,
+    },
+  });
+}
+
+//유저 상세정보 저장 요청 API
+export async function saveUserDetails(data: UserDetailRequestDTO) {
+  const response = await axiosInstance.post("/v1/user-details", data);
+
+  return response.data;
+}
+
+//유저 상세정보 불러오기 API
+export async function getUserDetails(): Promise<UserDetailRequestDTO> {
+  const response = await axiosInstance.get<UserDetailRequestDTO>("/v1/user-details")
+  return response.data;
 }
