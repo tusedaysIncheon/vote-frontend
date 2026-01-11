@@ -2,9 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { axiosInstance } from "../../lib/api/axiosInstance";
 import { useAuthStore } from "../../store/useAuthStore";
+import { getDeviceId } from "@/lib/utils";
 
 const initAuthProcess = async () => {
-  const deviceId = localStorage.getItem("deviceId") || "unknown-device";
+  const deviceId = getDeviceId();
 
 
   const { data: tokenData } = await axiosInstance.post(
@@ -14,7 +15,7 @@ const initAuthProcess = async () => {
   );
   
 
-  const { data: userData } = await axiosInstance.get("/v1/user", {
+  const { data: userData } = await axiosInstance.get("/v1/user/load-info", {
     headers: { Authorization: `Bearer ${tokenData.accessToken}` }
   });
 

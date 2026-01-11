@@ -1,15 +1,15 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { UserResponseDTO } from "@/types/auth";
+import type { UserLoadDTO } from "@/types/auth";
 import { axiosInstance } from "@/lib/api/axiosInstance";
 
 interface AuthState {
-  user: UserResponseDTO | null;
+  user: UserLoadDTO | null;
   accessToken: string | null;
   isAuthenticated: boolean;
 
   setAccessToken: (token: string) => void;
-  setUser: (user: UserResponseDTO | null) => void;
+  setUser: (user: UserLoadDTO| null) => void;
   logout: () => Promise<void>;
   clearSession: ()=> void;
 }

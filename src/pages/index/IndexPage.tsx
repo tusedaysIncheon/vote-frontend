@@ -35,7 +35,7 @@ function IndexPage() {
       {isAuthenticated ? (
         <>
           <h1 className="text-3xl font-bold">
-            {user?.username}님, 환영합니다 🎉
+            {user?.nickname}님, 환영합니다 🎉
           </h1>
           <p className="text-muted-foreground">
             오늘도 멋진 선택을 해보세요 👇
