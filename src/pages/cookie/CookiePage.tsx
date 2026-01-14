@@ -11,9 +11,8 @@ const BACKEND_API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL;
 
 function CookiePage() {
   const navigate = useNavigate();
-  const { setAccessToken, setUser } = useAuthStore();
+  const { setAccessToken } = useAuthStore();
   const queryClient = useQueryClient();
-  
 
   useEffect(() => {
     const fetchCookie2Body = async () => {
@@ -27,28 +26,29 @@ function CookiePage() {
               "Content-Type": "application/json",
             },
             credentials: "include",
-            body: JSON.stringify({ deviceId : deviceId}),
+            body: JSON.stringify({ deviceId: deviceId }),
           }
         );
 
         if (!exchangeResponse.ok) throw new Error("쿠키 처리 실패");
 
         const result = await exchangeResponse.json();
-        const accessToken = result.accessToken
+        const accessToken = result.accessToken;
+
+        setAccessToken(accessToken);
 
         // 로그인 처리 성공 후 닉네임 관련 유저정보 조회
         const userResponseInfo = await getUserLoadInfo();
 
-       setAccessToken(accessToken);
-       setUser(userResponseInfo);
-       queryClient.setQueryData(["auth-init"], userResponseInfo);
-
-       queryClient.invalidateQueries({ queryKey: ["auth-init"] });
+        // setUser 대신 queryClient로 캐시 업데이트
+        queryClient.setQueryData(["user"], userResponseInfo);
 
         if (userResponseInfo.needsProfileSetup) {
           navigate("/profile-setup", { replace: true });
         } else {
-          toast.success(`${userResponseInfo.nickname ?? "회원"}님 환영합니다!`);
+          toast.success(
+            `${userResponseInfo.nickname ?? "회원"}님 환영합니다!`
+          );
           navigate("/", { replace: true });
         }
       } catch (error) {
@@ -58,7 +58,7 @@ function CookiePage() {
     };
 
     fetchCookie2Body();
-  }, [navigate]);
+  }, [navigate, setAccessToken, queryClient]);
 
   return (
     <PageLayout

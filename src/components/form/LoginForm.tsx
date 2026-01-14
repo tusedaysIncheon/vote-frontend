@@ -16,6 +16,7 @@ import { getUserLoadInfo, loginAPI } from "@/lib/api/UserApi";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+import { queryClient } from "@/main";
 
 // ★ 분리한 스키마와 타입 import
 import { loginSchema, type LoginFormValues } from "@/lib/zodSchemas/LoginSchema";
@@ -26,7 +27,6 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const navigate = useNavigate();
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
-  const setUser = useAuthStore((state) => state.setUser);
 
   // React Hook Form 설정
   const {
@@ -54,7 +54,8 @@ export function LoginForm({
       setAccessToken(accessToken);
 
      const fullUserInfo = await getUserLoadInfo();
-      setUser(fullUserInfo);
+      
+      queryClient.setQueryData(['user'], fullUserInfo);
 
     const displayName = fullUserInfo.nickname || data.username;
       
