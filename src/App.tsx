@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { ThemeProvider } from "./components/theme/theme-provider"
 import AppLayout from "./components/layouts/AppLayout"
 import AuthInitializer from "./components/auth/AuthInitializer" // 아까 만든 컴포넌트
-import { useAuthInit } from "./hooks/queries/useAuthInit";
+
 import IndexPage from "./pages/index/IndexPage";
 import LoginPage from "./pages/auth/LoginPage";
 import SignUpPage from "./pages/auth/SignUpPage";
@@ -13,7 +13,7 @@ import LayoutGuidePage from "./pages/examples/LayoutGuidePage";
 
 function AppRoutes() {
 
-  useAuthInit(true); 
+
 
   return (
     <Routes>
@@ -36,7 +36,7 @@ function AppRoutes() {
       <Route path="/cookie" element={<CookiePage />} />
       <Route path="/profile-setup" element={<ProfileSetupPage />} />
       <Route path="/dev/layout-guide" element={<LayoutGuidePage />} />
-      
+
     </Routes>
   );
 }
@@ -46,7 +46,7 @@ export default function App() {
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <BrowserRouter>
         <AuthInitializer>
-          <AppRoutes/>
+          <AppRoutes />
         </AuthInitializer>
       </BrowserRouter>
     </ThemeProvider>
