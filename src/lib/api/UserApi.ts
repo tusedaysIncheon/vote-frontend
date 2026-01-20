@@ -123,11 +123,13 @@ export async function loginAPI(username: string, password: string) {
 
 //로그아웃 API
 export async function logoutAPI() {
+  console.log("로그아웃 함수 시작");
   try {
     const deviceId = getDeviceId();
     await axiosInstance.post("v1/user/logout", {
       deviceId: deviceId,
     });
+    console.log(deviceId);
   } catch (err) {
     console.warn("로그아웃 요청 중 오류 발생 (무시하고 진행):", err);
   }

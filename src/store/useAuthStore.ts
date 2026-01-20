@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { axiosInstance } from "@/lib/api/axiosInstance";
 import { queryClient } from "@/main";
+import { logoutAPI } from "@/lib/api/UserApi";
 
 interface AuthState {
   accessToken: string | null;
@@ -15,7 +15,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   setAccessToken: (token) => set({ accessToken: token, isAuthenticated: !!token }),
   logout: async () => {
     try {
-      await axiosInstance.post('v1/user/logout');
+      await logoutAPI();
     } catch (error) {
       console.error("로그아웃 요청 실패:", error);
     } finally {
