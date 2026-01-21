@@ -248,8 +248,12 @@ export function VoteCard({ data }: VoteCardProps) {
 
       {/* Footer: Minimized padding */}
       <CardFooter className="flex items-center justify-between">
-        <div className="text-xs text-muted-foreground font-medium">
-          {totalVotes.toLocaleString()}명 참여
+        <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
+          <span>{totalVotes.toLocaleString()}명 참여</span>
+          <span className="text-[10px]">•</span>
+          <span className="text-primary/90">
+            {formatDistanceToNow(new Date(data.endDate), { addSuffix: true, locale: ko })} 종료
+          </span>
         </div>
 
         <div className="flex items-center gap-1">
