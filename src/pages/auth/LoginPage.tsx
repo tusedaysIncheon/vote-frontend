@@ -1,5 +1,5 @@
-import { LoginForm } from "@/components/form/LoginForm"
-import { PageLayout } from "@/components/layouts/PageLayout"
+import { LoginForm } from "@/features/auth/components/LoginForm"
+import { PageLayout } from "@/shared/layouts/PageLayout"
 
 export default function LoginPage() {
   return (

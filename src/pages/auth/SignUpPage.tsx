@@ -1,7 +1,7 @@
 import logo from "@/assets/logo.png"
-import { SocialLoginSection } from "@/components/form/SocialSignForm";
-import { PageLayout } from "@/components/layouts/PageLayout";
-import { Button } from "@/components/ui/button";
+import { SocialLoginSection } from "@/features/auth/components/SocialSignForm";
+import { PageLayout } from "@/shared/layouts/PageLayout";
+import { Button } from "@/shared/ui/button";
 import {
   Form,
   FormControl,
@@ -9,10 +9,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useRegiForm } from "@/hooks/useRegiForm";
-import { useSignUpForm } from "@/hooks/useSignUpForm";
+} from "@/shared/ui/form";
+import { Input } from "@/shared/ui/input";
+import { useRegiForm } from "@/features/auth/hooks/useRegiForm";
+import { useSignUpForm } from "@/features/auth/hooks/useSignUpForm";
 
 export default function SignUpPage() {
   const form = useSignUpForm();

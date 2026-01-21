@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { PageLayout } from "@/components/layouts/PageLayout";
+import { PageLayout } from "@/shared/layouts/PageLayout";
 import { useAuthStore } from "@/store/useAuthStore";
 import { getDeviceId } from "@/lib/utils";
-import { getUserLoadInfo } from "@/lib/api/UserApi";
+import { getUserLoadInfo } from "@/features/user/api/user.api";
 import { useQueryClient } from "@tanstack/react-query";
 
 const BACKEND_API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL;

@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import { ThemeProvider } from "./components/theme/theme-provider"
-import AppLayout from "./components/layouts/AppLayout"
-import AuthInitializer from "./components/auth/AuthInitializer" // 아까 만든 컴포넌트
+import { ThemeProvider } from "@/shared/theme/theme-provider"
+import AppLayout from "@/shared/layouts/AppLayout"
+import AuthInitializer from "@/features/auth/components/AuthInitializer"
 
 import IndexPage from "./pages/index/IndexPage";
 import LoginPage from "./pages/auth/LoginPage";

@@ -1,5 +1,5 @@
-import { PageLayout } from "@/components/layouts/PageLayout"
-import { Button } from "@/components/ui/button"
+import { PageLayout } from "@/shared/layouts/PageLayout"
+import { Button } from "@/shared/ui/button"
 
 export default function LayoutGuidePage() {
   return (
@@ -42,7 +42,7 @@ export default function LayoutGuidePage() {
           로그인/회원가입 페이지와 같이 콘텐츠를 가운데 배치하고 폭을 제한할 때 사용합니다.
         </p>
         <pre className="overflow-x-auto rounded-md bg-muted p-4 text-xs">
-{`<PageLayout variant="centered" contentWidth="sm">
+          {`<PageLayout variant="centered" contentWidth="sm">
   <Logo />
   <LoginForm />
 </PageLayout>`}
@@ -55,7 +55,7 @@ export default function LayoutGuidePage() {
           리스트나 대시보드처럼 위에서부터 자연스럽게 흐르는 레이아웃에 사용합니다.
         </p>
         <pre className="overflow-x-auto rounded-md bg-muted p-4 text-xs">
-{`<PageLayout variant="top" contentWidth="lg" contentClassName="gap-8">
+          {`<PageLayout variant="top" contentWidth="lg" contentClassName="gap-8">
   <PageHeader />
   <Filters />
   <CardGrid />

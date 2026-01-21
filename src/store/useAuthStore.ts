@@ -1,12 +1,13 @@
 import { create } from "zustand";
 import { queryClient } from "@/main";
-import { logoutAPI } from "@/lib/api/UserApi";
+import { logoutAPI } from "@/features/auth/api/auth.api";
 
 interface AuthState {
   accessToken: string | null;
   isAuthenticated: boolean;
   setAccessToken: (token: string | null) => void;
   logout: () => Promise<void>;
+  clearSession: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -22,5 +23,9 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ accessToken: null, isAuthenticated: false });
       queryClient.removeQueries({ queryKey: ['user'], exact: true });
     }
+  },
+  clearSession: () => {
+    set({ accessToken: null, isAuthenticated: false });
+    queryClient.removeQueries({ queryKey: ['user'], exact: true });
   },
 }));

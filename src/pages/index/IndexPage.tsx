@@ -1,5 +1,5 @@
-import { PageLayout } from "@/components/layouts/PageLayout";
-import { VoteCard } from "@/components/feature/vote/VoteCard";
+import { PageLayout } from "@/shared/layouts/PageLayout";
+import { VoteCard } from "@/features/vote/components/VoteCard";
 import type { VoteData } from "@/types/vote";
 import { useFeedStore } from "@/store/useFeedStore"; // ✅ 스토어 import
 

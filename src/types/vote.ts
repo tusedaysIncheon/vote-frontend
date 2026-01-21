@@ -56,9 +56,10 @@ export interface VoteData {
 
   options: VoteOption[];
 
-  // UI 전용 또는 추가 필드
   isLiked?: boolean;
   likeCount?: number;
+
+  // UI 전용 또는 추가 필드
   timeLeft?: string;
 
   // 내 투표 정보

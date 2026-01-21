@@ -1,12 +1,12 @@
-import { PageLayout } from "@/components/layouts/PageLayout";
-import { Button } from "@/components/ui/button";
+import { PageLayout } from "@/shared/layouts/PageLayout";
+import { Button } from "@/shared/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/shared/ui/card";
 import {
   Form,
   FormControl,
@@ -14,16 +14,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from "@/shared/ui/form";
+import { Input } from "@/shared/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+} from "@/shared/ui/select";
+import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
 import { UserRound, Sparkles, Camera } from "lucide-react";
 
 import { toast } from "sonner";
@@ -42,11 +42,10 @@ import {
 } from "@/types/profile";
 
 // API 함수들 (UserApi.ts 경로 확인 필요)
-import {
-  getPresignedUrlAPI,
-  saveUserDetails,
-  uploadToS3,
-} from "@/lib/api/UserApi";
+
+
+import { saveUserDetails } from "@/features/user/api/user.api";
+import { getPresignedUrlAPI, uploadToS3 } from "@/shared/api/file.api";
 import { queryClient } from "@/main";
 
 // --- 1. Zod 스키마 정의 ---

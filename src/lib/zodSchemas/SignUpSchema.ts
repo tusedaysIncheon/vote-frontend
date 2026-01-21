@@ -25,3 +25,5 @@ export const SignUpSchema = z
     path: ["confirmPassword"],
     message: "비밀번호가 일치하지 않습니다.",
   });
+
+export type SignUpFormValues = z.infer<typeof SignUpSchema>;

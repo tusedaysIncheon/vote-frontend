@@ -1,5 +1,5 @@
 import axios from "axios";
-import type {  InternalAxiosRequestConfig } from "axios";
+import type { InternalAxiosRequestConfig } from "axios";
 import { useAuthStore } from "@/store/useAuthStore";
 
 const API = import.meta.env.VITE_BACKEND_API_BASE_URL;
@@ -39,7 +39,7 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status !== 401) return Promise.reject(error);
 
     if (requestUrl.includes("/login") || requestUrl.includes("/jwt/refresh") || requestUrl.includes("/logout")) {
-      await useAuthStore.getState().clearSession; // 서버 요청 없이 클라이언트 상태만 비움
+      useAuthStore.getState().clearSession(); // 서버 요청 없이 클라이언트 상태만 비움
       return Promise.reject(error);
     }
 
@@ -57,12 +57,12 @@ axiosInstance.interceptors.response.use(
       );
 
       const newAccessToken = refreshResponse.data.accessToken;
-      
-      if(!newAccessToken){
+
+      if (!newAccessToken) {
 
         console.warn("리프레시 요청은 성공(200)했으나, 토큰이 없는 Guest 상태입니다. 로그아웃 처리합니다.");
         throw new Error("Guest Mode: No Access Token");
-      
+
       }
 
       useAuthStore.getState().setAccessToken(newAccessToken);
