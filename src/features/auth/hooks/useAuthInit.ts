@@ -13,7 +13,7 @@ const initAuthProcess = async () => {
     { skipAuth: true }
   );
 
-  return data.accessToken;
+  return data.data.accessToken;
 };
 
 export function useAuthInit(enabled: boolean) {

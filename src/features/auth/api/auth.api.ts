@@ -2,6 +2,7 @@ import {
     type UserRequestDTO,
     type UserResponseDTO,
 } from "@/types/auth";
+import type { ApiResponse } from "@/types/api";
 import { axiosInstance } from "@/lib/api/axiosInstance";
 import { getDeviceId } from "@/lib/utils";
 
@@ -10,13 +11,13 @@ export async function signUpApi(
     userData: UserRequestDTO
 ): Promise<UserResponseDTO> {
     try {
-        const response = await axiosInstance.post<UserResponseDTO>(
+        const response = await axiosInstance.post<ApiResponse<UserResponseDTO>>(
             "/v1/user",
             userData,
             { skipAuth: true }
         );
 
-        return response.data;
+        return response.data.data;
     } catch (error: any) {
         console.error("회원가입 실패:", error);
         const message =
@@ -31,23 +32,13 @@ export async function signUpApi(
 // 중복 검사 API 호출
 export async function existUserApi(username: string): Promise<boolean> {
     try {
-        const response = await axiosInstance.post(
+        const response = await axiosInstance.post<ApiResponse<boolean>>(
             "/v1/user/exist",
             { username },
             { skipAuth: true }
         );
 
-        const result = response.data;
-
-        if (typeof result === "boolean") {
-            return result;
-        }
-
-        if (result && typeof result.exist === "boolean") {
-            return result.exist;
-        }
-
-        throw new Error("아이디 중복 검사 응답 형식을 확인해주세요.");
+        return response.data.data;
     } catch (error: any) {
         console.error("❌ 아이디 중복 검사 오류:", error);
 
@@ -77,7 +68,8 @@ export async function loginAPI(username: string, password: string) {
         },
         { skipAuth: true }
     );
-    return response.data;
+    // login returns AuthLoginResponseDTO inside ApiResponse
+    return response.data.data;
 }
 
 //로그아웃 API

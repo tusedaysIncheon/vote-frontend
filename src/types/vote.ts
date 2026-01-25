@@ -29,3 +29,19 @@ export interface VoteData {
   // 사용자 상호작용
   votedOptionId: number | null; // null이면 투표 안 함
 }
+
+export interface Comment {
+  id: number;
+  writer: Writer;
+  content: string;
+  createdAt: string;
+  likeCount: number;
+  isLiked: boolean;
+  replyCount: number;
+}
+
+export interface Demographics {
+  ageGroup: string; // "10s", "20s", "30s", ...
+  percentage: number;
+  color: string;
+}

@@ -56,11 +56,12 @@ axiosInstance.interceptors.response.use(
         { withCredentials: true }
       );
 
-      const newAccessToken = refreshResponse.data.accessToken;
+      // ApiResponse 적용: data.data.accessToken
+      const newAccessToken = refreshResponse.data?.data?.accessToken;
 
       if (!newAccessToken) {
 
-        console.warn("리프레시 요청은 성공(200)했으나, 토큰이 없는 Guest 상태입니다. 로그아웃 처리합니다.");
+        console.warn("리프레시 요청은 성공했으나, 토큰이 없는 상태입니다. 로그아웃 처리합니다.");
         throw new Error("Guest Mode: No Access Token");
 
       }

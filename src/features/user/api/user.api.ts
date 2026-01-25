@@ -3,6 +3,7 @@ import {
     type UserRequestDTO,
     type UserResponseDTO,
 } from "@/types/auth";
+import type { ApiResponse } from "@/types/api";
 import { axiosInstance } from "@/lib/api/axiosInstance";
 import type {
     UserDetailRequestDTO,
@@ -11,8 +12,8 @@ import type {
 //내정보조회 API
 export async function getMyInfoAPI(): Promise<UserResponseDTO> {
     try {
-        const response = await axiosInstance.get<UserResponseDTO>("/v1/user");
-        return response.data;
+        const response = await axiosInstance.get<ApiResponse<UserResponseDTO>>("/v1/user");
+        return response.data.data;
     } catch (error: any) {
         console.error("내정보조회 실패:", error);
         throw new Error("사용자 정보를 불러오지 못했습니다.");
@@ -22,8 +23,8 @@ export async function getMyInfoAPI(): Promise<UserResponseDTO> {
 //내정보수정 API
 export async function updateMyInfoAPI(data: Partial<UserRequestDTO>) {
     try {
-        const response = await axiosInstance.put("/v1/user", data);
-        return response.data;
+        const response = await axiosInstance.put<ApiResponse<number>>("/v1/user", data);
+        return response.data.data;
     } catch (error: any) {
         console.error("❌ 내 정보 수정 실패:", error);
         throw new Error(
@@ -35,8 +36,8 @@ export async function updateMyInfoAPI(data: Partial<UserRequestDTO>) {
 //회원탈퇴API
 export async function deleteUserApi() {
     try {
-        const response = await axiosInstance.delete("/v1/user");
-        return response.data;
+        const response = await axiosInstance.delete<ApiResponse<boolean>>("/v1/user");
+        return response.data.data;
     } catch (error: any) {
         console.error("❌ 회원 탈퇴 실패:", error);
         throw new Error(
@@ -47,22 +48,23 @@ export async function deleteUserApi() {
 
 //유저 상세정보 저장 요청 API
 export async function saveUserDetails(data: UserDetailRequestDTO) {
-    const response = await axiosInstance.post("/v1/user-details", data);
+    const response = await axiosInstance.post<ApiResponse<string>>("/v1/user-details", data);
 
-    return response.data;
+    return response.data.data;
 }
 
 //유저 상세정보 불러오기 API
 export async function getUserDetails() {
-    const response = await axiosInstance.get<UserDetailRequestDTO>(
+    // Assuming generic type usage matches what backend returns or what frontend expects
+    const response = await axiosInstance.get<ApiResponse<UserDetailRequestDTO>>(
         "/v1/user-details"
     );
-    return response.data;
+    return response.data.data;
 }
 
 //로그인 직후 스토어 저장용
 export async function getUserLoadInfo() {
-    const response = await axiosInstance.get<UserLoadDTO>("/v1/user/load-info");
+    const response = await axiosInstance.get<ApiResponse<UserLoadDTO>>("/v1/user/load-info");
 
-    return response.data;
+    return response.data.data;
 }
